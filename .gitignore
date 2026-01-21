@@ -20,7 +20,6 @@ build/
 *.tar
 
 # IDE
-.vscode/
 .idea/
 *.swp
 *.swo
