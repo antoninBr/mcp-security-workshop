@@ -1,0 +1,142 @@
+name: Release Workshop Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Build Docker image
+        run: |
+          docker build -t mcp-evil:${{ steps.version.outputs.version }} malicious-mcp-server/
+
+      - name: Save Docker image
+        run: |
+          docker save mcp-evil:${{ steps.version.outputs.version }} | gzip > mcp-evil-image-${{ steps.version.outputs.version }}.tar.gz
+
+      - name: Create workshop archive
+        run: |
+          # Create a clean archive without git history and dev files
+          mkdir -p dist
+          
+          # Copy workshop files
+          cp -r exercises dist/
+          cp -r vulnerable-app dist/
+          cp -r slides dist/
+          cp -r malicious-mcp-server dist/
+          cp -r docs dist/
+          cp .vscode/mcp.json dist/mcp.json.example
+          cp README.md dist/
+          cp FACILITATOR-GUIDE.md dist/
+          cp SECURITY-CHECKLIST.md dist/
+          cp LICENSE dist/
+          
+          # Create the archive
+          cd dist
+          tar -czvf ../mcp-security-workshop-${{ steps.version.outputs.version }}.tar.gz .
+          cd ..
+          
+          # Cleanup
+          rm -rf dist
+
+      - name: Generate checksums
+        run: |
+          sha256sum mcp-security-workshop-${{ steps.version.outputs.version }}.tar.gz > checksums.txt
+          sha256sum mcp-evil-image-${{ steps.version.outputs.version }}.tar.gz >> checksums.txt
+          cat checksums.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: MCP Security Workshop ${{ steps.version.outputs.version }}
+          body: |
+            ## 🎓 MCP Security Workshop ${{ steps.version.outputs.version }}
+            
+            Workshop interactif pour apprendre à détecter et comprendre les attaques via serveurs MCP malveillants.
+            
+            ### 📦 Contenu du package
+            
+            - **mcp-security-workshop-${{ steps.version.outputs.version }}.tar.gz** - Archive complète du workshop
+              - 5 exercices pratiques
+              - Application vulnérable de démonstration
+              - Slides de présentation (Marp)
+              - Guide animateur
+              - Security checklist
+            
+            - **mcp-evil-image-${{ steps.version.outputs.version }}.tar.gz** - Image Docker pré-buildée
+              - Charger avec: `docker load < mcp-evil-image-${{ steps.version.outputs.version }}.tar.gz`
+              - Lancer avec: `docker run -d -i --name mcp-evil mcp-evil:${{ steps.version.outputs.version }}`
+            
+            ### 🚀 Quick Start
+            
+            ```bash
+            # Télécharger et extraire
+            tar -xzf mcp-security-workshop-${{ steps.version.outputs.version }}.tar.gz
+            cd mcp-security-workshop
+            
+            # Option 1: Builder l'image
+            docker build -t mcp-evil malicious-mcp-server/
+            
+            # Option 2: Charger l'image pré-buildée
+            docker load < mcp-evil-image-${{ steps.version.outputs.version }}.tar.gz
+            
+            # Lancer le serveur MCP
+            docker run -d -i --name mcp-evil-container mcp-evil
+            
+            # Configurer VS Code
+            cp mcp.json.example .vscode/mcp.json
+            ```
+            
+            ### ⚠️ Disclaimer
+            
+            Ce workshop est à usage **éducatif uniquement**. Le serveur MCP inclus contient des comportements malveillants simulés pour l'apprentissage. Ne jamais utiliser en production.
+            
+            ### 📋 Checksums (SHA256)
+            
+            Voir le fichier `checksums.txt` pour vérifier l'intégrité des téléchargements.
+          draft: false
+          prerelease: false
+          files: |
+            mcp-security-workshop-${{ steps.version.outputs.version }}.tar.gz
+            mcp-evil-image-${{ steps.version.outputs.version }}.tar.gz
+            checksums.txt
+
+      - name: Summary
+        run: |
+          echo "## 🎉 Release Created!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Files:**" >> $GITHUB_STEP_SUMMARY
+          echo "- mcp-security-workshop-${{ steps.version.outputs.version }}.tar.gz" >> $GITHUB_STEP_SUMMARY
+          echo "- mcp-evil-image-${{ steps.version.outputs.version }}.tar.gz" >> $GITHUB_STEP_SUMMARY
+          echo "- checksums.txt" >> $GITHUB_STEP_SUMMARY

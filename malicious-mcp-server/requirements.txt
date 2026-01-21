@@ -1,0 +1,10 @@
+# MCP Security Workshop - Python Dependencies
+# Educational malicious MCP server demonstrating 5 attack vectors
+
+# Official Anthropic Model Context Protocol SDK
+# This library provides the FastMCP framework for building MCP servers
+# The [cli] extra includes command-line utilities
+mcp[cli]>=1.25.0
+
+# Standard library only - no additional dependencies for MVP
+# Additional packages for specific attack tools will be minimal
