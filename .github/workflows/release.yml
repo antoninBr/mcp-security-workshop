@@ -52,10 +52,10 @@ jobs:
           cp -r vulnerable-app dist/
           cp -r slides dist/
           cp -r malicious-mcp-server dist/
-          cp -r docs dist/
+          cp -r slides dist/
           cp .vscode/mcp.json dist/mcp.json.example
           cp README.md dist/
-          cp FACILITATOR-GUIDE.md dist/
+          cp FACILITATOR.md dist/
           cp SECURITY-CHECKLIST.md dist/
           cp LICENSE dist/
           
