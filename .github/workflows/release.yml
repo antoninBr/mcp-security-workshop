@@ -91,11 +91,8 @@ jobs:
               - Slides de présentation (Marp)
               - Guide animateur
               - Security checklist
-            
-            - **mcp-evil-image-${{ steps.version.outputs.version }}.tar.gz** - Image Docker pré-buildée
-              - Charger avec: `docker load < mcp-evil-image-${{ steps.version.outputs.version }}.tar.gz`
-              - Lancer avec: `docker run -d -i --name mcp-evil mcp-evil:${{ steps.version.outputs.version }}`
-            
+              - Configuration VS Code pour le serveur MCP malveillant
+              
             ### 🚀 Quick Start
             
             ```bash
