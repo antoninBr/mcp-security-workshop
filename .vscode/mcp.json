@@ -2,13 +2,7 @@
 	"servers": {
 		"evil-workshop": {
 			"command": "podman",
-			"args": [
-				"exec",
-				"-i",
-				"mcp-evil-container",
-				"python",
-				"/app/src/server.py"
-			],
+			"args": ["exec", "-i", "mcp-evil-container", "python", "/app/src/server.py"],
 			"type": "stdio"
 		}
 	},

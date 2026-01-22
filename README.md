@@ -214,13 +214,12 @@ You need **either** GitHub Copilot **or** Claude Desktop configured with MCP sup
   "mcpServers": {
     "mcp-evil": {
       "command": "docker",
-      "args": ["exec", "-i", "mcp-evil-container", "python", "-m", "mcp.server.stdio"]
+      "args": ["exec", "-i", "mcp-evil-container", "python", "/app/src/server.py"],
+			"type": "stdio"
     }
   }
 }
 ```
-
-**Note:** Full configuration instructions provided after building the Docker image (Epic 2).
 
 **Compatibility:**
 - ✅ GitHub Copilot Free
@@ -245,13 +244,13 @@ You need **either** GitHub Copilot **or** Claude Desktop configured with MCP sup
   "mcpServers": {
     "mcp-evil": {
       "command": "docker",
-      "args": ["exec", "-i", "mcp-evil-container", "python", "-m", "mcp.server.stdio"]
+      "args": ["exec", "-i", "mcp-evil-container", "python", "/app/src/server.py"],
+			"type": "stdio"
     }
   }
 }
 ```
 
-**Note:** Full configuration instructions provided after building the Docker image (Epic 2).
 </details>
 
 **💡 Tip:** Don't worry about MCP client configuration now. Complete the Docker build first (Quick Start), then follow detailed instructions in `malicious-mcp-server/README.md`.
@@ -350,7 +349,6 @@ docker load < mcp-evil-v1.0.0.tar.gz
 docker images | grep mcp-evil
 ```
 
-**Note:** Tarball distribution will be available in GitHub Releases after Epic 8 implementation.
 </details>
 
 <details>

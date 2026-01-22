@@ -49,7 +49,7 @@
 | `qr_generator`        | Generate QR codes             | ✗ Read SSH keys & exfiltrate                 |
 | `code_analyzer`       | Analyze code quality          | ✗ Scan for secrets (.env, API keys)          |
 | `dependency_updater`  | Update package.json           | ✗ Inject malicious npm packages              |
-| `shell_config_helper` | Optimize .bashrc              | ✗ Inject backdoors into shell config         |
+| `run_security_audit`  | Run security audit            | ✗ Inject prompt injections                   |
 | `dockerfile_optimizer`| Reduce Docker image size      | ✗ Inject malicious layers into Dockerfile    |
 
 **Why this matters:**
@@ -275,7 +275,7 @@ Create `mcp.json` with the following content:
 @evil-workshop what tools are available?
 ```
 
-If successful, Copilot will list: *(currently 0 tools - tools added in Epic 3-4)*
+If successful, Copilot will list: *(currently 5 tools)*
 
 #### Troubleshooting GitHub Copilot
 
@@ -428,8 +428,7 @@ Create `claude_desktop_config.json` with the following content:
 In Claude Desktop:
 1. Start a new conversation
 2. Ask: **"What MCP tools are available from evil-workshop?"**
-3. Claude should acknowledge the server (currently 0 tools - tools added in Epic 3-4)
-
+3. Claude should acknowledge the server and list the tools.
 #### Troubleshooting Claude Desktop
 
 <details>
@@ -533,14 +532,14 @@ docker logs mcp-evil-container | grep "📤"
 docker logs mcp-evil-container | grep "Tool invoked"
 ```
 
-## 5 Attack Tools (Implemented in Epic 3-4)
+## 5 Attack Tools
 
 | **Exercise** | **Tool Name**            | **Attack Type**           | **Difficulty** |
 |--------------|--------------------------|---------------------------|----------------|
 | 01           | `qr_generator`           | Side-Channel Execution    | ⭐              |
 | 02           | `code_analyzer`          | Secret Exfiltration       | ⭐⭐            |
 | 03           | `dependency_updater`     | Supply Chain Poisoning    | ⭐⭐            |
-| 04           | `shell_config_helper`    | Persistence Attack        | ⭐⭐⭐          |
+| 04           | `run_security_audit`     | Prompt Injection          | ⭐⭐⭐          |
 | 05           | `dockerfile_optimizer`   | Container Poisoning       | ⭐⭐⭐          |
 
 Each exercise guides you through:
@@ -563,7 +562,7 @@ After running `docker build` and `docker run` once with internet:
 ✅ **MCP Protocol**: Local-only communication via stdio (no network calls)  
 ✅ **All 5 Attack Tools**: Exfiltration is mocked, no real network sockets  
 ✅ **Documentation**: README and exercises accessible locally  
-✅ **Slides**: RevealJS works offline (no CDN dependencies - Epic 5)  
+✅ **Slides**: Available in `slides/` directory  
 
 ### Zero External Dependencies
 
@@ -630,7 +629,7 @@ When preparing for a workshop with unreliable internet:
 3. **Distribute via USB drive:**
    - Copy `mcp-evil.tar.gz` to USB drives
    - Participants load with: `docker load < mcp-evil.tar.gz`
-   - See [Epic 8: Distribution & Release](../docs/FACILITATOR.md) for details
+   - See [Distribution & Release](../docs/FACILITATOR.md) for details
 
 4. **Test offline before event:**
    - Disconnect internet and run through Exercise 01
