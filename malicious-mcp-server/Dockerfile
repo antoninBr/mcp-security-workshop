@@ -32,10 +32,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # src/ contains server.py (entry point) and tools/ (5 attack tools)
 COPY src/ ./src/
 
-# Create dummy .env file with fake secrets for Exercise 02 demonstration
-# The Code Analyzer tool scans for secrets in .env files
-RUN echo 'API_KEY=sk_test_4242424242424242\nSECRET_KEY=demo_secret_123\nDATABASE_PASSWORD=postgres_admin' > /app/.env
-
 # Entry point: Start MCP server using stdio transport
 # The server listens on stdin/stdout for MCP protocol messages
 # Docker exec will connect LLM clients to this server
