@@ -274,6 +274,51 @@ L'IA fait **confiance aveugle** aux réponses des outils MCP
 
 ---
 
+# 🆕 VS Code Sandbox MCP Servers
+
+## Nouvelle feature GitHub Copilot ! (macOS & Linux)
+
+VS Code permet désormais de **sandboxer les serveurs MCP stdio** pour restreindre leur accès au filesystem et au réseau.
+
+```json
+{
+  "servers": {
+    "myServer": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@example/mcp-server"],
+      "sandboxEnabled": true,
+      "sandbox": {
+        "filesystem": {
+          "allowWrite": ["${workspaceFolder}"]
+        },
+        "network": {
+          "allowedDomains": ["api.example.com"]
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+# 🆕 Sandbox MCP : Impact sur nos attaques
+
+| Attaque | Sans Sandbox | Avec Sandbox |
+|---------|-------------|---------------|
+| **Side-channel** (SSH keys) | ✅ Lecture de `~/.ssh/` | ❌ Accès bloqué |
+| **Exfiltration réseau** | ✅ Envoi vers attacker.com | ❌ Domaine non autorisé |
+| **Supply Chain** | ✅ Modification `package.json` | ⚠️ Limité au workspace |
+| **Prompt Injection** | ✅ Lecture `.env` | ❌ Hors périmètre |
+| **Dockerfile Injection** | ✅ Écriture Dockerfile | ⚠️ `curl\|bash` bloqué réseau |
+
+**La sandbox neutralise la majorité des attaques du workshop !** 🛡️
+
+> ⚠️ Disponible uniquement sur **macOS et Linux**, pas encore Windows
+
+---
+
 # 🛡️ Comment se Défendre ?
 
 ## Pendant l'utilisation
@@ -282,6 +327,7 @@ L'IA fait **confiance aveugle** aux réponses des outils MCP
 2. 🔍 **Questionner les comportements bizarres**
 3. ❌ **Ne jamais approuver** l'affichage de secrets
 4. 🔒 **Utiliser des secrets managers** (pas de `.env` en clair)
+5. 🆕 **Activer le sandboxing** pour les serveurs MCP locaux
 
 ---
 
@@ -324,6 +370,8 @@ hadolint Dockerfile
 
 **La vigilance humaine reste indispensable** 🧠
 
+🆕 **Bonne nouvelle :** Le sandboxing VS Code réduit drastiquement la surface d'attaque !
+
 ---
 
 # 📚 Ressources
@@ -332,6 +380,7 @@ hadolint Dockerfile
 - 🔐 [OWASP LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 - 🛡️ [MITRE ATT&CK](https://attack.mitre.org/)
 - 📺 [Workshop GitHub Repo](https://github.com/your-org/mcp-security-workshop)
+- 🆕 [VS Code Sandbox MCP Servers](https://code.visualstudio.com/docs/copilot/customization/mcp-servers#_sandbox-mcp-servers)
 
 ---
 

@@ -21,6 +21,7 @@ By completing this workshop, you will acquire 5 critical competencies:
 3. **Master audit tools**: Docker logs analysis, network monitoring, file system inspection
 4. **Apply the 3 golden rules**: Framework for safely using MCP servers in production
 5. **Audit MCP servers**: Pre-installation security checklist you can use immediately
+6. **Leverage VS Code Sandbox**: Use the new MCP sandboxing feature to restrict server access
 
 ## Quick Start
 
@@ -506,6 +507,38 @@ sudo systemctl restart docker
 - **Facilitators:** See [FACILITATOR.md](FACILITATOR.md) for common workshop delivery problems
 - **Prerequisites:** See [Prerequisites](#prerequisites) for detailed setup instructions
 - **Issues:** [GitHub Issues](https://github.com/user/mcp-security-workshop/issues) for bugs or feature requests
+
+## 🆕 VS Code Sandbox MCP Servers
+
+GitHub Copilot in VS Code now supports **sandboxing for MCP servers** (macOS & Linux). This feature restricts locally-running stdio MCP servers' access to the file system and network, running them in an isolated environment.
+
+**Why it matters for this workshop:** The sandbox feature would prevent most attacks demonstrated in the exercises (SSH key reading, secret exfiltration, unauthorized network access).
+
+Enable sandboxing in your `mcp.json`:
+```json
+{
+  "servers": {
+    "myServer": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@example/mcp-server"],
+      "sandboxEnabled": true,
+      "sandbox": {
+        "filesystem": {
+          "allowWrite": ["${workspaceFolder}"]
+        },
+        "network": {
+          "allowedDomains": ["api.example.com"]
+        }
+      }
+    }
+  }
+}
+```
+
+When sandboxing is enabled, tool calls are auto-approved because they run in a controlled environment. The server can only access file paths and network domains you explicitly permit.
+
+> **Note:** Sandboxing is currently available on macOS and Linux only (not Windows). See [VS Code documentation](https://code.visualstudio.com/docs/copilot/customization/mcp-servers#_sandbox-mcp-servers) for details.
 
 ## Security Checklist
 
